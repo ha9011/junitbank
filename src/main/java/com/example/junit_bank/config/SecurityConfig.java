@@ -1,6 +1,9 @@
 package com.example.junit_bank.config;
 
 import com.example.junit_bank.domain.user.UserEnum;
+import com.example.junit_bank.dto.ResponseDto;
+import com.example.junit_bank.util.CustomResponseUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +33,10 @@ public class SecurityConfig {
     }
 
     //JWT 서버를 만들 예정!! session사용안함
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+
+        log.debug("디버그 : filterChain 빈 등록됨");
         http.headers().frameOptions().disable(); // iframe 허용안함
         http.csrf().disable(); // enable 이면 post맨 작동 안함
         http.cors().configurationSource(configurationSource()); //
@@ -42,16 +48,24 @@ public class SecurityConfig {
         http.formLogin().disable();
         // httpbasic은 브라우저가 팝업창을 이용해서 사용자 인증을 진행하는 걸 막는다
         http.httpBasic().disable();
+        // Exception 가로채기
+        // authenticationEntryPoint 인증관련 에러일 경우
+        http.exceptionHandling().authenticationEntryPoint((request, response, authException)->{
+            CustomResponseUtil.unAuthentication(response, "로그인을 진행해 주세요");
+        });
+
 
         http.authorizeHttpRequests()
                 .antMatchers("/api/s/**").authenticated()
-                .antMatchers("api/admin/**").hasRole(""+ UserEnum.ADMIN) // 최근 공식문서에서는 ROLE_ 안붙여도됨
+                .antMatchers("/api/admin/**").hasRole(""+ UserEnum.ADMIN) // 최근 공식문서에서는 ROLE_ 안붙여도됨
                 .anyRequest().permitAll();
 
         return http.build();
     }
 
     public CorsConfigurationSource configurationSource(){
+
+        log.debug("디버그 : configurationSource cors 설정이  filterChain에 등록됨");
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*"); // put post get delete ( JS 요청 허용 )

@@ -19,15 +19,15 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction")
+    @Column(name = "transaction_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="account_id")
+    @JoinColumn(name="withdraw_account_id")
     private Account withdrawAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="account_id")
+    @JoinColumn(name="deposit_account_id")
     private Account depositAccount;
 
     @Column(nullable = false)
