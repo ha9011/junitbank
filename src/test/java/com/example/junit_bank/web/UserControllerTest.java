@@ -84,6 +84,7 @@ public class UserControllerTest extends DummyObject {
         joinReqDto.setEmail("ssar@nate.com");
         joinReqDto.setFullname("하하");
 
+
         String requestBody = om.writeValueAsString(joinReqDto);
         System.out.println("requestBody : " + requestBody);
 
