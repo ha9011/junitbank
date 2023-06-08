@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor // 스프링이 user 객체생성할 때 빈생성자로 new를 하기 때문
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="user_tb")
+@Table(name="transaction_tb")
 @Entity
 public class Transaction {
     @Id

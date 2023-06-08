@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class DummyObject {
     // save용
-    protected User newUser(String username, String fullname){
+    protected static User newUser(String username, String fullname){
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String encPw = bCryptPasswordEncoder.encode("1234");
 

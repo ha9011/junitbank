@@ -32,16 +32,18 @@ public class UserService {
     @Transactional // 트랜잭션이 메서드 시작할 때, 시작되고 종료될 때 함께 종료
     public JoinRespDto 회원가입(JoinReqDto joinReqDto){
         // 1. 동일 유저 네임 존재 검사
-        Optional<User> userOp;
-        userOp = userRepository.findByUsername(joinReqDto.getUsername());
+        Optional<User> userOp = userRepository.findByUsername(joinReqDto.getUsername());
         if(userOp.isPresent()){
             // 유저네임 중복
             throw new CustomApiException("동일한 username이 존재합니다");
         }
 
-        // 2. 패스워드 인코딩 + 회원가입
-        User userPS = userRepository.save(joinReqDto.toEntity(securityConfig.passwordEncoder()));
+        User entity = joinReqDto.toEntity(securityConfig.passwordEncoder());
+        System.out.println(" entity : " + entity.toString());
 
+        // 2. 패스워드 인코딩 + 회원가입
+        User userPS = userRepository.save(entity);
+        System.out.println(" return : " + userPS.toString());
         // 3. DTO 응답
         return new JoinRespDto(userPS);
     }

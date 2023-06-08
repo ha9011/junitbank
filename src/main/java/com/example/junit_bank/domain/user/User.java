@@ -3,6 +3,7 @@ package com.example.junit_bank.domain.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor // 스프링이 user 객체생성할 때 빈생성자로 new를 하기 때문
 @Getter
+@ToString
 @EntityListeners(AuditingEntityListener.class)
 @Table(name="user_tb")
 @Entity
@@ -20,10 +22,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
     @Column(unique = true, nullable = false, length = 20)
     private String username;
     @Column(nullable = false, length = 60)
-
     private String password;
     @Column(nullable = false, length = 20)
     private String email;
