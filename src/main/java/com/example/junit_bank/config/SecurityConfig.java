@@ -1,5 +1,7 @@
 package com.example.junit_bank.config;
 
+import com.example.junit_bank.config.Auth.JwtAuthenticationFilter;
+import com.example.junit_bank.config.Auth.JwtAuthorizationFilter;
 import com.example.junit_bank.domain.user.UserEnum;
 import com.example.junit_bank.dto.ResponseDto;
 import com.example.junit_bank.util.CustomResponseUtil;
@@ -9,10 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -32,6 +38,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // JWT 필터 등록 필요
+    // 필터를 만들었고 filterChain에서 필터 등록이 필요
+    public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
+        @Override
+        public void configure(HttpSecurity builder) throws Exception {
+            AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class); // 인증매니저
+            builder.addFilter(new JwtAuthenticationFilter(authenticationManager));
+            builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
+            super.configure(builder);
+        }
+    }
+
     //JWT 서버를 만들 예정!! session사용안함
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -49,11 +67,19 @@ public class SecurityConfig {
         // httpbasic은 브라우저가 팝업창을 이용해서 사용자 인증을 진행하는 걸 막는다
         http.httpBasic().disable();
         // Exception 가로채기
+
         // authenticationEntryPoint 인증관련 에러일 경우
         http.exceptionHandling().authenticationEntryPoint((request, response, authException)->{
-            CustomResponseUtil.unAuthentication(response, "로그인을 진행해 주세요");
+            CustomResponseUtil.fail(response, "로그인을 진행해 주세요", HttpStatus.UNAUTHORIZED);
         });
 
+        // 권한 실패
+        http.exceptionHandling().accessDeniedHandler((req, res, e) -> {
+            CustomResponseUtil.fail(res, "권한이 없습니다", HttpStatus.FORBIDDEN);
+        });
+
+        //필터 적용
+        http.apply(new CustomSecurityFilterManager());
 
         http.authorizeHttpRequests()
                 .antMatchers("/api/s/**").authenticated()
