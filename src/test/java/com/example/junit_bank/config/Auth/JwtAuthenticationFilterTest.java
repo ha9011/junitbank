@@ -6,6 +6,8 @@ import com.example.junit_bank.domain.user.User;
 import com.example.junit_bank.domain.user.UserRepository;
 import com.example.junit_bank.dto.user.UserReqDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.aspectj.lang.annotation.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment =  SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc // mock 환경 컨테이너에서 DI을 하려면 필요하다
@@ -48,14 +50,14 @@ class JwtAuthenticationFilterTest extends DummyObject {
         userRepository.save(newUser("ssar", "쌀"));
     }
 
-    @BeforeEach
-    public void resetUp() {
-        System.out.println("::: resetUp :::");
-
-        Optional<User> save = userRepository.findByUsername("ssar");
-        userRepository.deleteById(save.get().getId());
-
-    }
+//    @AfterEach
+//    public void resetUp() {
+//        System.out.println("::: resetUp :::");
+//
+//        Optional<User> save = userRepository.findByUsername("ssar");
+//        userRepository.deleteById(save.get().getId());
+//
+//    }
 
 
     @Test
