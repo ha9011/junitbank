@@ -2,6 +2,7 @@ package com.example.junit_bank.config;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.http.ResponseEntity.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc // Mock(가짜) 환경에 MockMvc가 등록됨
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK) // 가짜환경에서 테스트
@@ -36,7 +38,8 @@ public class SecurityConfigTest {
 
 
         //then
-        assertThat(httpStatusCode).isEqualTo(403);
+        //assertThat(httpStatusCode).isEqualTo(403);
+        perform.andExpect(status().isUnauthorized());
     }
 
     @Test
