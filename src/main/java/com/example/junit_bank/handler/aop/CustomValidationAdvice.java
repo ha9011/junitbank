@@ -40,12 +40,12 @@ public class CustomValidationAdvice {
                     for (FieldError err : bindingResult.getFieldErrors()) {
                         errMap.put(err.getField(), err.getDefaultMessage());
                     }
-                    System.out.println("--validationAdvice--");
+                    System.out.println("--validationAdvice--1");
                     throw new CustomValidationException("유효성 검사 실패", errMap);
                 }
             }
         }
-        System.out.println("--validationAdvice--");
+        System.out.println("--validationAdvice--2");
         return proceedingJoinPoint.proceed(); // 아무일 없으면 실행(정상)
     }
 }
