@@ -1,5 +1,6 @@
 package com.example.junit_bank.config.dummy;
 
+import com.example.junit_bank.domain.account.Account;
 import com.example.junit_bank.domain.user.User;
 import com.example.junit_bank.domain.user.UserEnum;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,4 +39,16 @@ public class DummyObject {
                 .build();
         return ssar;
     };
+
+    protected Account newMockAccount(Long id, Long number, User user, Long balance) {
+        return Account.builder()
+                .id(id)
+                .number(number)
+                .password(1234L)
+                .balance(balance)
+                .user(user)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
 }
